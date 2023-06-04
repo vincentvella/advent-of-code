@@ -4,8 +4,9 @@ test('splits string down middle', () => {
   expect(splitString('abcdef')).toStrictEqual(['abc', 'def'])
 })
 
-test('gets similar character from two strings', () => {
+test('gets similar character from n strings', () => {
   expect(getSimilarCharacter(splitString('abcdaf'))).toBe('a')
+  expect(getSimilarCharacter(['ab', 'bc', 'bd'])).toBe('b')
 })
 
 test('gets numerical value of character', () => {

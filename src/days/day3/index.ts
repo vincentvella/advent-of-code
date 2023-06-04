@@ -7,10 +7,11 @@ export function splitString(input: string): Array<string> {
 }
 
 export function getSimilarCharacter(input: Array<string>): string {
-  const [first, second] = input
+  const [first, ...rest] = input
   for (const character of first.split('')) {
-    if (second.includes(character)) {
-      return character
+    const match = rest.every((s) => s.includes(character)) ? character : null
+    if (match) {
+      return match
     }
   }
   throw new Error('No similar character found')
@@ -24,11 +25,15 @@ export function getNumericalValue(character: string): number {
 }
 
 export function day3() {
+  let group: Array<string> = []
   const value = input.split('\n').reduce((acc, curr) => {
-    const [first, second] = splitString(curr)
-    const similarCharacter = getSimilarCharacter([first, second])
-    const value = getNumericalValue(similarCharacter)
-    return acc + value
+    group.push(curr)
+    if (group.length === 3) {
+      const badge = getSimilarCharacter(group)
+      group = []
+      return acc + getNumericalValue(badge)
+    }
+    return acc
   }, 0)
   console.log('day3', value)
 }
