@@ -45,11 +45,8 @@ const getMoveAttributes = (move: string): [number, number, number] => {
 function followMoves(board: Board, moves: string[]) {
   moves.forEach((move) => {
     const [num, from, to] = getMoveAttributes(move)
-    const moves = Array.from({ length: num }, (_, i) => [from - 1, to - 1])
-    moves.forEach(([from, to]) => {
-      const crate = board[from].shift() as string
-      board[to].unshift(crate)
-    })
+    const movingCrates = board[from - 1].splice(0, num)
+    board[to - 1].unshift(...movingCrates)
   })
 }
 
