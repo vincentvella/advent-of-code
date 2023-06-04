@@ -6,27 +6,23 @@ const Values: Record<string, number> = {
   A: 1,
   B: 2,
   C: 3,
-  X: 1,
-  Y: 2,
-  Z: 3,
+  X: 0,
+  Y: 3,
+  Z: 6,
 }
 
-function determineOutcome(elf: string, self: string): 0 | 3 | 6 {
+const getHand = (hand: number): number => (hand % 3 < 1 ? 3 : hand % 3)
+
+export function determineSelf(elf: string, result: string): number {
   const elfValue = Values[elf]
-  const selfValue = Values[self]
-
-  let resultingValue = selfValue - elfValue
-  if (resultingValue < 0) {
-    resultingValue = resultingValue + 3
-  }
-
-  switch (resultingValue) {
+  const desiredResult = Values[result]
+  switch (desiredResult) {
     case 0:
-      return 3 // Tie
-    case 1:
-      return 6 // Win
-    case 2:
-      return 0 // Lose
+      return getHand(elfValue - 1)
+    case 3:
+      return getHand(elfValue)
+    case 6:
+      return getHand(elfValue + 1)
     default:
       throw new Error('Something went wrong')
   }
@@ -34,9 +30,10 @@ function determineOutcome(elf: string, self: string): 0 | 3 | 6 {
 
 export function day2() {
   const totalScore = input.split('\n').reduce((acc, curr) => {
-    const [elf, self] = curr.split(' ')
-    const outcome = determineOutcome(elf, self)
-    const roundTotal = outcome + Values[self]
+    const [elf, result] = curr.split(' ')
+    const self = determineSelf(elf, result)
+    const outcome = Values[result]
+    const roundTotal = self + outcome
     return acc + roundTotal
   }, 0)
   console.log(totalScore)
