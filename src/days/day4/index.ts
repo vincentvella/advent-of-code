@@ -12,13 +12,23 @@ function getPair(input: string): [string, string] {
   return [first, second]
 }
 
-export function decideIfIdRangeFullyContainsOther(
+function isInRange(input: number, range: [number, number]): boolean {
+  const [min, max] = range
+  return input >= min && input <= max
+}
+
+export function decideIfIdRangeOverlapsOther(
   assign1: [number, number],
   assign2: [number, number],
 ): boolean {
   const [minId1, maxId1] = assign1
   const [minId2, maxId2] = assign2
-  return (minId1 <= minId2 && maxId1 >= maxId2) || (minId2 <= minId1 && maxId2 >= maxId1)
+  return (
+    isInRange(minId1, assign2) ||
+    isInRange(maxId1, assign2) ||
+    isInRange(minId2, assign1) ||
+    isInRange(maxId2, assign1)
+  )
 }
 
 export function day4() {
@@ -27,8 +37,8 @@ export function day4() {
     const [assign1, assign2] = getPair(line)
     const idRange1 = getMinMaxPair(assign1)
     const idRange2 = getMinMaxPair(assign2)
-    const fullyContains = decideIfIdRangeFullyContainsOther(idRange1, idRange2)
-    if (fullyContains) {
+    const overlaps = decideIfIdRangeOverlapsOther(idRange1, idRange2)
+    if (overlaps) {
       overlappingAssignmentPairs += 1
     }
   })
