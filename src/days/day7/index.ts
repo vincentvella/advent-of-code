@@ -47,6 +47,24 @@ class TreeNode {
     })
     return result
   }
+
+  findSmallestDirectoryToDelete(minimum: number): number {
+    let smallestWithoutGoingOver = 70_000_000
+    const dirs = this.children.filter((child) => child.isDir)
+    dirs.forEach((dir) => {
+      const size = dir.getSize()
+      if (size >= minimum) {
+        if (size < smallestWithoutGoingOver) {
+          smallestWithoutGoingOver = size
+        }
+      }
+      const smallest = dir.findSmallestDirectoryToDelete(minimum)
+      if (smallest < smallestWithoutGoingOver) {
+        smallestWithoutGoingOver = smallest
+      }
+    })
+    return smallestWithoutGoingOver
+  }
 }
 
 class Tree {
@@ -107,5 +125,8 @@ const createDirectoryTree = () => {
 export function day7() {
   const tree = createDirectoryTree()
   // tree.root.print()
-  console.log(tree.root.combineSubdirectorySizesLessThanLimit())
+  // console.log(tree.root.combineSubdirectorySizesLessThanLimit())
+  const currentlyFreeSpace = 70_000_000 - tree.root.getSize()
+  const neededSpace = 30_000_000 - currentlyFreeSpace
+  console.log(tree.root.findSmallestDirectoryToDelete(neededSpace))
 }
