@@ -1,4 +1,5 @@
 import fs from 'fs'
+import { get } from 'http'
 const input = fs.readFileSync('./src/days/day8/input.txt', 'utf8')
 
 const board: Array<Array<number>> = []
@@ -14,50 +15,58 @@ const initializeBoard = () => {
   })
 }
 
-const checkVisibleFromLeft = (x: number, row: number[]): boolean => {
+const getViewingDistance = (height: number, vector: number[]) => {
+  let distance = 0
+  vector.find((value) => {
+    distance++
+    if (value >= height) {
+      return true
+    }
+    return false
+  })
+  return distance
+}
+
+const getViewingDistanceLeft = (x: number, row: number[]): number => {
   const left = row.slice(0, x).reverse()
-  return left.every((value) => value < row[x])
+  return getViewingDistance(row[x], left)
 }
 
-const checkVisibleFromRight = (x: number, row: number[]): boolean => {
+const getViewingDistanceRight = (x: number, row: number[]): number => {
   const right = row.slice(x + 1)
-  return right.every((value) => value < row[x])
+  return getViewingDistance(row[x], right)
 }
 
-const checkVisibleFromBottom = (y: number, column: number[]): boolean => {
+const getViewingDistanceBottom = (y: number, column: number[]): number => {
   const bottom = column.slice(y + 1)
-  return bottom.every((value) => value < column[y])
+  return getViewingDistance(column[y], bottom)
 }
 
-const checkVisibleFromTop = (y: number, column: number[]): boolean => {
+const getViewingDistanceTop = (y: number, column: number[]): number => {
   const top = column.slice(0, y).reverse()
-  return top.every((value) => value < column[y])
+  return getViewingDistance(column[y], top)
 }
 
-const checkVisible = (x: number, y: number): boolean => {
-  if (x === 0 || x === board[y].length - 1 || y === 0 || y === board.length - 1) {
-    return true
-  }
+const getScenicScore = (x: number, y: number): number => {
   const row = board[y]
   const column = board.map((row) => row[x])
-  if (
-    checkVisibleFromLeft(x, row) ||
-    checkVisibleFromRight(x, row) ||
-    checkVisibleFromTop(y, column) ||
-    checkVisibleFromBottom(y, column)
-  ) {
-    return true
-  }
-  return false
+  const left = getViewingDistanceLeft(x, row)
+  const right = getViewingDistanceRight(x, row)
+  const bottom = getViewingDistanceBottom(y, column)
+  const top = getViewingDistanceTop(y, column)
+  return left * right * bottom * top
 }
 
 export function day8() {
   initializeBoard()
-  let visibleCount = 0
+  let bestScenicScore = 0
   for (let y = 0; y < board.length; y++) {
     for (let x = 0; x < board[y].length; x++) {
-      checkVisible(x, y) ? visibleCount++ : null
+      const scenicScore = getScenicScore(x, y)
+      if (scenicScore > bestScenicScore) {
+        bestScenicScore = scenicScore
+      }
     }
   }
-  console.log('day8', visibleCount)
+  console.log('day8', bestScenicScore)
 }
