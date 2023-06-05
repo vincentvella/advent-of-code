@@ -1,5 +1,7 @@
 import fs from 'fs'
 
+const START_BUFFER_LENGTH = 14
+
 export function parseBuffer(buffer: string) {
   const uniqueCharacters: string[] = []
   const chars = buffer.split('')
@@ -12,7 +14,7 @@ export function parseBuffer(buffer: string) {
       uniqueCharacters.splice(0, matchedChar + 1)
       uniqueCharacters.push(char)
     }
-    if (uniqueCharacters.length === 4) {
+    if (uniqueCharacters.length === START_BUFFER_LENGTH) {
       return i + 1
     }
   }
